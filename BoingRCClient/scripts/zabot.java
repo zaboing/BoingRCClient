@@ -1,0 +1,82 @@
+package scripts;
+import client.*;
+import gui.*;
+import scripting.*;
+public class zabot extends ValidScript {
+	public zabot() {
+		super("zabot");
+	}
+private java.util.HashMap<Channel, java.util.HashMap<String, String>> commandMap = new java.util.HashMap<Channel, java.util.HashMap<String, String>>();
+private java.util.HashMap<Channel, java.util.HashMap<String, String>> aliasMap = new java.util.HashMap<Channel, java.util.HashMap<String, String>>();
+
+public void receiveMessage(Channel channel, User user, String message) {
+	if (message.startsWith("!")) {
+		String command;
+		if (message.contains(" ")) {
+			command = message.substring(1, message.indexOf(' '));
+		} else if (message.length() > 1) {
+			command = message.substring(1);
+		} else {
+			return;
+		}
+		command = command.toLowerCase();
+		if (!aliasMap.containsKey(channel)) {
+			aliasMap.put(channel, new java.util.HashMap<String, String>());
+		}
+		if (aliasMap.get(channel).containsKey(command)) {
+			command = aliasMap.get(channel).get(command);
+		}
+		if (!commandMap.containsKey(channel)) {
+			commandMap.put(channel, new java.util.HashMap<String, String>());
+		}
+		if (command.equals("version")) {
+			chat(channel, "Version 1.0");
+		} else if (command.equals("list")) {
+			java.util.Set<String> cmds = commandMap.get(channel).keySet();
+			for (String cmd : cmds) {
+				chat(channel, cmd + ": " + commandMap.get(channel).get(cmd));
+			}
+		} else if (command.equals("addalias")) {
+			int first = message.indexOf(' ');
+			int second = message.indexOf(' ', first + 1);
+			aliasMap.get(channel).put(message.substring(first + 1, second), message.substring(second + 1));
+			chat(channel, "Alias " + message.substring(first + 1, second) + " was added.");
+		} else if (command.equals("addcmd")) {
+			int first = message.indexOf(' ');
+			int second = message.indexOf(' ', first + 1);
+			commandMap.get(channel).put(message.substring(first + 1, second), message.substring(second + 1));
+			chat(channel, "Command " + message.substring(first + 1, second) + " was added.");
+		} else if (command.equals("savecmds")) {
+			if (serialize(commandMap.get(channel), channel.channel + "/cmds.map")) {
+				chat(channel, "Saved commands.");
+			} else {
+				chat(channel, "Couldn't save commands.");
+			}
+			if (serialize(aliasMap.get(channel), channel.channel + "/aliases.map")) {
+				chat(channel, "Saved aliases.");
+			} else {
+				chat(channel, "Couldn't save aliases.");
+			}
+		} else if (command.equals("loadcmds")) {
+			Result result = new Result();
+			if (deserialize(channel.channel + "/cmds.map", result)) {
+				commandMap.put(channel, (java.util.HashMap<String, String>) result.result);
+				chat(channel, "Loaded commands.");
+			} else {
+				chat(channel, "Couldn't load commands.");
+			}
+			if (deserialize(channel.channel + "/aliases.map", result)) {
+				aliasMap.put(channel, (java.util.HashMap<String, String>) result.result);
+				chat(channel, "Loaded aliases.");
+			} else {
+				chat(channel, "Couldn't load aliases.");
+			}
+		} else if (commandMap.get(channel).containsKey(command)) {
+			chat(channel, commandMap.get(channel).get(command));
+		}
+	}
+}
+
+public void onRegister(Channel channel) {
+	chat(channel, getName() + " is now active in this channel.");
+}}
