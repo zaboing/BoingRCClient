@@ -2,8 +2,6 @@ package client;
 
 import gui.IRCWindow;
 
-import java.net.UnknownHostException;
-
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
@@ -23,7 +21,7 @@ public class IRCClient {
 		createGui();
 	}
 	
-	public static void connectTo(String ip, int port, UserSettings settings) throws UnknownHostException {
+	public static void connectTo(String ip, int port, UserSettings settings) throws Exception {
 		if (server != null) {
 			stop();
 		}

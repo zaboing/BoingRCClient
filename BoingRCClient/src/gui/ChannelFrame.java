@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,7 +10,10 @@ import java.awt.event.ComponentEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -20,6 +24,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML;
@@ -33,7 +40,7 @@ import client.IRCClient;
 import client.User;
 
 public class ChannelFrame extends JInternalFrame implements ActionListener,
-		Runnable, Comparator<User> {
+		Runnable, Comparator<User>, HyperlinkListener {
 	private static final long serialVersionUID = 2148429019002341497L;
 
 	private IRCWindow ircWindow;
@@ -50,6 +57,9 @@ public class ChannelFrame extends JInternalFrame implements ActionListener,
 
 	public User bot;
 
+	private static final String urlRegex = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+	private static final Pattern urlPattern = Pattern.compile(urlRegex);
+	
 	public ChannelFrame(IRCWindow ircWindow, Channel channel) {
 		super(channel.channel);
 		menuBar = new JMenuBar();
@@ -77,6 +87,7 @@ public class ChannelFrame extends JInternalFrame implements ActionListener,
 		this.messages.setEditable(false);
 		this.messages.setText(getDefaultHTMLTemplate());
 		this.messages.setFont(new Font("Monospaced", Font.PLAIN, 13));
+		this.messages.addHyperlinkListener(this);
 		this.history.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		this.add(history);
 		this.userList.setEditable(false);
@@ -142,11 +153,17 @@ public class ChannelFrame extends JInternalFrame implements ActionListener,
 	private void appendLine(String line) {
 		line = line.replace("&", "&amp;").replace("<", "&lt;")
 				.replace(">", "&gt;").replace("\"", "&quot;");
-		line = "<div align=\"left\">" + line + "</div></br>";
 		appendRawLine(line);
 	}
-	
+
 	private void appendRawLine(String line) {
+		final int oldValue = this.history.getHorizontalScrollBar().getValue();
+		Matcher matcher = urlPattern.matcher(line);
+		while (matcher.find()) {
+			String found = matcher.group();
+			line = line.replaceFirst(found, "<a href='" + found + "'>" + found + "</a>");
+		}
+		line = "<div align=\"left\">" + line + "</div></br>";
 		HTMLDocument doc = (HTMLDocument) this.messages.getDocument();
 		try {
 			doc.insertBeforeEnd(doc.getElement(doc.getDefaultRootElement(),
@@ -157,11 +174,15 @@ public class ChannelFrame extends JInternalFrame implements ActionListener,
 			e.printStackTrace();
 		}
 		this.messages.setDocument(doc);
-		this.messages.setCaretPosition(this.messages.getDocument().getLength());
+		this.messages.setCaretPosition(doc.getLength());
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				ChannelFrame.this.history.getHorizontalScrollBar().setValue(
+						oldValue);
+			}
+		});
 		reshape();
 	}
-	
-	
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -211,13 +232,27 @@ public class ChannelFrame extends JInternalFrame implements ActionListener,
 					item.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							channel.registerScript((ValidScript) script);
-							appendRawLine("<div class='notification'>Enabled script " + script.getName()
-									+ "</div>");
+							appendRawLine("<div class='notification'>Enabled script "
+									+ script.getName() + "</div>");
 						}
 					});
 				}
 			}
 			scripts.add(item);
+		}
+	}
+
+	public void hyperlinkUpdate(HyperlinkEvent e) {
+		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+			if (Desktop.isDesktopSupported()) {
+				try {
+					Desktop.getDesktop().browse(e.getURL().toURI());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				}
+			}
 		}
 	}
 }

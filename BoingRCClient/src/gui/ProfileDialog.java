@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import client.UserSettings;
@@ -17,7 +18,7 @@ public class ProfileDialog extends JDialog implements ActionListener {
 	
 	private JTextField profileName;
 	private JTextField login;
-	private JTextField pass;
+	private JPasswordField pass;
 	private JTextField nick;
 	
 	private JButton confirm;
@@ -31,7 +32,7 @@ public class ProfileDialog extends JDialog implements ActionListener {
 		add(new JLabel("Login name:"));
 		add(login = new JTextField());
 		add(new JLabel("Password:"));
-		add(pass = new JTextField());
+		add(pass = new JPasswordField());
 		add(new JLabel("Nick name:"));
 		add(nick = new JTextField());
 		add(confirm = new JButton("Confirm"));
@@ -44,7 +45,7 @@ public class ProfileDialog extends JDialog implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == confirm) {
-			new UserSettings(profileName.getText(), pass.getText(), nick.getText(), login.getText());
+			new UserSettings(profileName.getText(), new String(pass.getPassword()), nick.getText(), login.getText());
 			dispose();
 		} else if (e.getSource() == cancel) {
 			dispose();

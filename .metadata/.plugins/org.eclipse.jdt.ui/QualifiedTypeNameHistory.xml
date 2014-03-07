@@ -1,2 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="javax.swing.SwingUtilities"/>
+<fullyQualifiedTypeName name="java.rmi.ConnectException"/>
+<fullyQualifiedTypeName name="java.net.ConnectException"/>
+<fullyQualifiedTypeName name="java.util.regex.Pattern"/>
+<fullyQualifiedTypeName name="java.util.regex.Matcher"/>
+<fullyQualifiedTypeName name="javax.swing.event.HyperlinkEvent"/>
+<fullyQualifiedTypeName name="javax.swing.event.HyperlinkEvent.EventType"/>
+<fullyQualifiedTypeName name="java.awt.Desktop"/>
+<fullyQualifiedTypeName name="java.net.SocketAddress"/>
+<fullyQualifiedTypeName name="java.net.Proxy"/>
+</qualifiedTypeNameHistroy>

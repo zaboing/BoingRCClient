@@ -7,9 +7,11 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +27,18 @@ public class Server implements Runnable {
 
 	public List<Channel> channels = new ArrayList<Channel>();
 
-	public boolean connect() throws UnknownHostException {
+	public boolean connect() throws Exception {
 		if (socket != null) {
 			disconnect();
 		}
 		try {
-			socket = new Socket(ip, port);
+			Proxy proxy = Proxy.NO_PROXY; 
+			/*if (useProxy) {
+				SocketAddress address = new InetSocketAddress("87.200.196.60", 80);
+				proxy = new Proxy(Proxy.Type.SOCKS, address);
+			}*/
+			socket = new Socket(proxy);
+			socket.connect(new InetSocketAddress(ip, port));
 			writer = new BufferedWriter(new OutputStreamWriter(
 					socket.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(
@@ -40,7 +48,7 @@ public class Server implements Runnable {
 			writer.newLine();
 			writer.write("NICK " + settings.nick);
 			writer.newLine();
-			writer.write("USER " + settings.user + " 8 * : Java BOT by zaboing");
+			writer.write("USER " + settings.user + " 8 * : Java IRC Client by zaboing");
 			writer.newLine();
 			writer.flush();
 
@@ -60,12 +68,9 @@ public class Server implements Runnable {
 			}
 
 			return false;
-		} catch (UnknownHostException e) {
+		} catch (Exception e) {
 			throw e;
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-		return false;
 	}
 
 	public void run() {
@@ -96,7 +101,8 @@ public class Server implements Runnable {
 						String userName = line.substring(sender + 1,
 								line.indexOf('!'));
 						String msg = line.substring(message + 1);
-						getChannel(channel).addMessage(User.getUser(userName, channel), msg);
+						getChannel(channel).addMessage(
+								User.getUser(userName, channel), msg);
 					} else if ("JOIN".equalsIgnoreCase(msgType)) {
 						String channel = line.substring(receiver);
 						String username = line.substring(sender + 1,
@@ -110,7 +116,8 @@ public class Server implements Runnable {
 						if (cf != null) {
 							String username = line.substring(sender + 1,
 									line.indexOf('!'));
-							cf.channel.removeUser(User.getUser(username, channel));
+							cf.channel.removeUser(User.getUser(username,
+									channel));
 						}
 					} else if ("MODE".equalsIgnoreCase(msgType)) {
 						String channel = line.substring(receiver, message - 1);
@@ -139,14 +146,16 @@ public class Server implements Runnable {
 	}
 
 	public void disconnect() {
-		if (socket != null) {
-			try {
-				writer.write(":tmi.twitch.tv QUIT :disconnected");
-				writer.newLine();
-				writer.flush();
-				socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+		if (socket != null && socket.isConnected() && !socket.isClosed()) {
+			if (writer != null) {
+				try {
+					writer.write(":tmi.twitch.tv QUIT :disconnected");
+					writer.newLine();
+					writer.flush();
+					socket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			if (receiveThread != null) {
 				try {
