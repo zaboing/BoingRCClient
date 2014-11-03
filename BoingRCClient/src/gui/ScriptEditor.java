@@ -106,7 +106,7 @@ public class ScriptEditor extends JDialog implements ActionListener {
 					null, null, units);
 			task.call();
 			fileManager.close();
-			//javaSrcFile.delete();
+			javaSrcFile.delete();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

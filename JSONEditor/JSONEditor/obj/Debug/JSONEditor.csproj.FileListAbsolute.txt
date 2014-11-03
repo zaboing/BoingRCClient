@@ -1,0 +1,15 @@
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\bin\Debug\JSONEditor.exe.config
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\bin\Debug\JSONEditor.exe
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\bin\Debug\JSONEditor.pdb
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\JSONEditor.csprojResolveAssemblyReference.cache
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\MainWindow.baml
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\MainWindow.g.cs
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\App.g.cs
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\JSONEditor_MarkupCompile.cache
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\JSONEditor.g.resources
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\JSONEditor.Properties.Resources.resources
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\JSONEditor.csproj.GenerateResource.Cache
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\JSONEditor.exe
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\JSONEditor.pdb
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\GitHub\BoingRCClient\JSONEditor\JSONEditor\obj\Debug\JSONEditor_MarkupCompile.lref

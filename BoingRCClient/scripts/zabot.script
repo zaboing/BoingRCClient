@@ -39,25 +39,25 @@ public void receiveMessage(Channel channel, User user, String message) {
 			commandMap.get(channel).put(message.substring(first + 1, second), message.substring(second + 1));
 			chat(channel, "Command " + message.substring(first + 1, second) + " was added.");
 		} else if (command.equals("savecmds")) {
-			if (serialize(commandMap.get(channel), channel.channel + "/cmds.map")) {
+			if (storeMap(channel.channel + "/cmds.json", commandMap.get(channel))) {
 				chat(channel, "Saved commands.");
 			} else {
 				chat(channel, "Couldn't save commands.");
 			}
-			if (serialize(aliasMap.get(channel), channel.channel + "/aliases.map")) {
+			if (storeMap(channel.channel + "/aliases.json", aliasMap.get(channel))) {
 				chat(channel, "Saved aliases.");
 			} else {
 				chat(channel, "Couldn't save aliases.");
 			}
 		} else if (command.equals("loadcmds")) {
 			Result result = new Result();
-			if (deserialize(channel.channel + "/cmds.map", result)) {
+			if (loadMap(channel.channel + "/cmds.json", result)) {
 				commandMap.put(channel, (java.util.HashMap<String, String>) result.result);
 				chat(channel, "Loaded commands.");
 			} else {
 				chat(channel, "Couldn't load commands.");
 			}
-			if (deserialize(channel.channel + "/aliases.map", result)) {
+			if (loadMap(channel.channel + "/aliases.json", result)) {
 				aliasMap.put(channel, (java.util.HashMap<String, String>) result.result);
 				chat(channel, "Loaded aliases.");
 			} else {

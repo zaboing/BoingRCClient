@@ -38,6 +38,7 @@ public class IRCWindow extends JFrame implements ComponentListener,
 	private JMenuItem addChannel;
 	private JMenu scripts;
 	private JMenuItem createScript;
+	private JMenuItem editCmds;
 	private JMenu editScript;
 	private JMenuItem reloadScripts;
 
@@ -73,6 +74,8 @@ public class IRCWindow extends JFrame implements ComponentListener,
 		scripts = new JMenu("Scripts");
 		createScript = new JMenuItem("Create Script");
 		createScript.addActionListener(new ScriptCreator(this));
+		editCmds = new JMenuItem("Edit commands");
+		editCmds.addActionListener(new CommandEditor());
 		editScript = new JMenu("Edit Script");
 		reloadScripts = new JMenuItem("Reload");
 		reloadScripts.addActionListener(new ActionListener() {
@@ -85,6 +88,7 @@ public class IRCWindow extends JFrame implements ComponentListener,
 		server.add(connect);
 		channel.add(addChannel);
 		scripts.add(createScript);
+		scripts.add(editCmds);
 		scripts.add(editScript);
 		editScript.add(reloadScripts);
 		menuBar.add(server);
